@@ -1,26 +1,36 @@
-// ui.js
-export function getHTML(config) {
+function getHtml(config) {
   return `<!DOCTYPE html>
-<html lang="zh-CN" class="scroll-smooth">
+<html lang="zh-CN" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cloudflare Proxy</title>
-  <meta name="description" content="基于 Cloudflare Workers 的全功能代理服务">
-  
+  <title>Cloudflare Proxy - 全功能代理服务</title>
+  <meta name="description" content="基于 Cloudflare Workers 的全功能 HTTP/HTTPS 代理服务">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
+
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
   <script>
     tailwind.config = {
-      darkMode: 'media', // 自动跟随系统
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Inter', '-apple-system', 'system-ui', 'sans-serif'],
-          },
           colors: {
-            slate: {
-              850: '#151e2e',
+            zinc: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+            },
+            teal: {
+              400: '#2dd4bf',
+              500: '#14b8a6',
+              600: '#0d9488',
             }
           }
         }
@@ -28,321 +38,236 @@ export function getHTML(config) {
     }
   </script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
   <style>
-    /* 基础样式微调 */
-    body {
-      font-family: 'Inter', sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-    
-    /* 隐藏滚动条但保留功能 (可选) */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 4px;
-    }
-    .dark ::-webkit-scrollbar-thumb {
-      background: #475569;
+    :root {
+      --bg-primary: theme('colors.zinc.50');
+      --bg-secondary: theme('colors.white');
+      --text-primary: theme('colors.zinc.800');
+      --text-secondary: theme('colors.zinc.600');
+      --border-color: theme('colors.zinc.100');
+      --accent-color: theme('colors.teal.500');
     }
 
-    /* 复制按钮动画 */
-    .copy-btn {
-      transition: all 0.2s ease;
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: theme('colors.black');
+        --bg-secondary: theme('colors.zinc.900');
+        --text-primary: theme('colors.zinc.100');
+        --text-secondary: theme('colors.zinc.400');
+        --border-color: rgba(63, 63, 70, 0.4);
+        --accent-color: theme('colors.teal.400');
+      }
     }
-    .copy-btn.copied {
-      background-color: #10b981 !important; /* emerald-500 */
-      border-color: #10b981 !important;
-      color: white !important;
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
     }
   </style>
 </head>
+<body class="flex h-full flex-col">
+  <div class="flex w-full flex-col">
+    <!-- 主内容区域 -->
+    <div class="relative flex w-full flex-col bg-white ring-1 ring-zinc-100 dark:bg-zinc-900 dark:ring-zinc-300/20">
+      <main class="flex-auto">
+        <div class="sm:px-8 mt-16 sm:mt-32">
+          <div class="mx-auto w-full max-w-7xl lg:px-8">
+            <div class="relative px-4 sm:px-8 lg:px-12">
+              <div class="mx-auto max-w-2xl lg:max-w-5xl">
 
-<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col">
+                <!-- 标题区域 -->
+                <div class="max-w-2xl">
+                  <div class="text-6xl mb-6">🌐</div>
+                  <h1 class="text-4xl font-bold tracking-tight text-zinc-800 sm:text-5xl dark:text-zinc-100">
+                    Cloudflare Proxy
+                  </h1>
+                  <p class="mt-6 text-base text-zinc-600 dark:text-zinc-400">
+                    CFPorxy v${config.VERSION} - 基于 Cloudflare Workers 的全功能 HTTP/HTTPS 代理服务，支持多种访问方式，完全免费且易于使用。
+                  </p>
+                </div>
 
-  <nav class="sticky top-0 z-50 w-full border-b border-slate-200/60 dark:border-slate-800/60 bg-white/70 dark:bg-slate-900/80 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex items-center space-x-3 group cursor-default">
-          <div class="p-1.5 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 transition-transform group-hover:scale-105">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-            </svg>
+                <!-- 表单卡片 -->
+                <div class="mt-16 rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
+                  <form id="urlForm" class="space-y-4">
+                    <div>
+                      <label for="targetUrl" class="block text-sm font-medium text-zinc-900 dark:text-zinc-100 mb-2">
+                        输入目标网址
+                      </label>
+                      <input
+                        type="text"
+                        id="targetUrl"
+                        placeholder="example.com 或 https://example.com"
+                        required
+                        class="w-full rounded-md bg-white px-4 py-2 text-sm text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-teal-500 dark:bg-zinc-800 dark:text-zinc-100 dark:ring-zinc-700 dark:placeholder:text-zinc-500"
+                      >
+                    </div>
+                    <button
+                      type="submit"
+                      class="w-full rounded-md bg-zinc-900 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 dark:bg-teal-500 dark:hover:bg-teal-400"
+                    >
+                      开始代理
+                    </button>
+                  </form>
+                </div>
+
+                <!-- 使用方式 -->
+                <div class="mt-16 rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
+                  <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
+                    使用方式
+                  </h2>
+                  <div class="space-y-4 text-sm text-zinc-600 dark:text-zinc-400">
+                    <div class="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-800/50">
+                      <div class="font-medium text-zinc-900 dark:text-zinc-100 mb-2">方式 1: Web 界面</div>
+                      <p>在上方输入框输入目标网址即可</p>
+                    </div>
+                    <div class="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-800/50">
+                      <div class="font-medium text-zinc-900 dark:text-zinc-100 mb-2">方式 2: 查询参数</div>
+                      <code class="text-xs text-teal-600 dark:text-teal-400 break-all" id="method2"></code>
+                    </div>
+                    <div class="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-800/50">
+                      <div class="font-medium text-zinc-900 dark:text-zinc-100 mb-2">方式 3: 路径方式</div>
+                      <code class="text-xs text-teal-600 dark:text-teal-400 break-all" id="method3"></code>
+                    </div>
+                    <div class="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-800/50">
+                      <div class="font-medium text-zinc-900 dark:text-zinc-100 mb-2">方式 4: HTTP 代理</div>
+                      <code class="text-xs text-teal-600 dark:text-teal-400 break-all" id="method4"></code>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 使用场景 -->
+                <div class="mt-16 rounded-2xl border border-zinc-100 p-6 dark:border-zinc-700/40">
+                  <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">
+                    使用场景
+                  </h2>
+                  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div class="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-800/50">
+                      <div class="font-medium text-zinc-900 dark:text-zinc-100 mb-2">📦 GitHub 文件加速</div>
+                      <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+                        加速 raw.githubusercontent.com 文件下载
+                      </p>
+                      <code class="text-xs text-teal-600 dark:text-teal-400 break-all" id="scene1"></code>
+                    </div>
+                    <div class="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-800/50">
+                      <div class="font-medium text-zinc-900 dark:text-zinc-100 mb-2">🐳 Docker 镜像加速</div>
+                      <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+                        配置 Docker 镜像代理源
+                      </p>
+                      <code class="text-xs text-teal-600 dark:text-teal-400 break-all" id="scene2"></code>
+                    </div>
+                    <div class="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-800/50">
+                      <div class="font-medium text-zinc-900 dark:text-zinc-100 mb-2">🤖 OpenAI API 代理</div>
+                      <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+                        代理 OpenAI API 请求
+                      </p>
+                      <code class="text-xs text-teal-600 dark:text-teal-400 break-all" id="scene3"></code>
+                    </div>
+                    <div class="rounded-lg bg-zinc-50 p-4 dark:bg-zinc-800/50">
+                      <div class="font-medium text-zinc-900 dark:text-zinc-100 mb-2">🌍 通用 CORS 代理</div>
+                      <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-2">
+                        解决前端跨域问题
+                      </p>
+                      <code class="text-xs text-teal-600 dark:text-teal-400 break-all" id="scene4"></code>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 功能特性 -->
+                <div class="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                  <div class="flex items-center text-sm text-zinc-600 dark:text-zinc-400">
+                    <svg class="w-5 h-5 mr-2 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    HTTPS 支持
+                  </div>
+                  <div class="flex items-center text-sm text-zinc-600 dark:text-zinc-400">
+                    <svg class="w-5 h-5 mr-2 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    CORS 跨域
+                  </div>
+                  <div class="flex items-center text-sm text-zinc-600 dark:text-zinc-400">
+                    <svg class="w-5 h-5 mr-2 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    智能重定向
+                  </div>
+                  <div class="flex items-center text-sm text-zinc-600 dark:text-zinc-400">
+                    <svg class="w-5 h-5 mr-2 text-teal-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    路径修复
+                  </div>
+                </div>
+
+              </div>
+            </div>
           </div>
-          <span class="text-lg font-bold tracking-tight">CF Proxy</span>
         </div>
-        <div class="flex items-center space-x-6">
-          <a href="/health" class="text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">状态</a>
-          <a href="https://github.com" target="_blank" class="text-sm font-medium text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-colors">GitHub</a>
+      </main>
+
+      <!-- 页脚 -->
+      <footer class="mt-32">
+        <div class="sm:px-8">
+          <div class="mx-auto w-full max-w-7xl lg:px-8">
+            <div class="border-t border-zinc-100 pt-10 pb-16 dark:border-zinc-700/40">
+              <div class="relative px-4 sm:px-8 lg:px-12">
+                <div class="mx-auto max-w-2xl lg:max-w-5xl">
+                  <div class="flex flex-col items-center justify-between gap-6 sm:flex-row">
+                    <p class="text-sm text-zinc-400 dark:text-zinc-500">
+                      Powered by Cloudflare Workers
+                    </p>
+                    <a
+                      href="https://github.com/Yrobot/cloudflare-proxy"
+                      target="_blank"
+                      class="group flex items-center text-sm font-medium text-zinc-800 transition hover:text-teal-500 dark:text-zinc-200 dark:hover:text-teal-400"
+                    >
+                      <svg class="w-5 h-5 mr-2 fill-zinc-500 transition group-hover:fill-teal-500 dark:fill-zinc-400 dark:group-hover:fill-teal-400" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.475 2 2 6.588 2 12.253c0 4.537 2.862 8.369 6.838 9.727.5.09.687-.218.687-.487 0-.243-.013-1.05-.013-1.91C7 20.059 6.35 18.957 6.15 18.38c-.113-.295-.6-1.205-1.025-1.448-.35-.192-.85-.667-.013-.68.788-.012 1.35.744 1.538 1.051.9 1.551 2.338 1.116 2.912.846.088-.666.35-1.115.638-1.371-2.225-.256-4.55-1.14-4.55-5.062 0-1.115.387-2.038 1.025-2.756-.1-.256-.45-1.307.1-2.717 0 0 .837-.269 2.75 1.051.8-.23 1.65-.346 2.5-.346.85 0 1.7.115 2.5.346 1.912-1.333 2.75-1.05 2.75-1.05.55 1.409.2 2.46.1 2.716.637.718 1.025 1.628 1.025 2.756 0 3.934-2.337 4.806-4.562 5.062.362.32.675.936.675 1.897 0 1.371-.013 2.473-.013 2.82 0 .268.188.589.688.486a10.039 10.039 0 0 0 4.932-3.74A10.447 10.447 0 0 0 22 12.253C22 6.588 17.525 2 12 2Z"/>
+                      </svg>
+                      在 GitHub 上给我们点赞
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </footer>
     </div>
-  </nav>
-
-  <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-    
-    <section class="text-center max-w-3xl mx-auto mb-24">
-      <div class="inline-flex items-center justify-center p-2 mb-8 rounded-full bg-slate-100 dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700">
-        <span class="px-3 text-xs font-semibold tracking-wide uppercase text-slate-500 dark:text-slate-400">Serverless Proxy</span>
-      </div>
-      
-      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
-        无界浏览，<br class="hidden sm:block" />触手可及
-      </h1>
-      
-      <p class="text-lg sm:text-xl text-slate-500 dark:text-slate-400 mb-10 leading-relaxed">
-        基于 Cloudflare Workers 构建的轻量级代理服务。<br class="hidden sm:inline"/>
-        支持 HTTPS 加密、跨域资源请求与 Docker 镜像加速。
-      </p>
-
-      <div class="max-w-xl mx-auto relative group">
-        <div class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full opacity-20 group-hover:opacity-40 blur transition duration-500"></div>
-        <form id="urlForm" class="relative flex items-center bg-white dark:bg-slate-800 rounded-full shadow-lg ring-1 ring-slate-900/5 dark:ring-white/10 p-2">
-          <div class="pl-4 text-slate-400">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-          </div>
-          <input
-            type="text"
-            id="targetUrl"
-            placeholder="输入目标网址 (e.g., github.com)"
-            required
-            class="flex-1 w-full bg-transparent border-none focus:ring-0 px-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 outline-none"
-          >
-          <button
-            type="submit"
-            class="px-6 py-3 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-semibold text-sm hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
-          >
-            访问
-          </button>
-        </form>
-      </div>
-    </section>
-
-    <section class="mb-24">
-      <div class="flex items-center justify-between mb-8">
-        <h2 class="text-2xl font-bold tracking-tight">快速接入</h2>
-        <span class="h-px flex-1 bg-slate-200 dark:bg-slate-800 ml-6"></span>
-      </div>
-      
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="group p-6 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all">
-          <div class="flex items-start space-x-4">
-            <div class="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600 dark:text-blue-400">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="font-semibold text-slate-900 dark:text-white mb-1">Web 直接访问</h3>
-              <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">最简单的使用方式，通过本页面输入框直接跳转。</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="group p-6 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all">
-          <div class="flex items-start space-x-4">
-            <div class="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-purple-600 dark:text-purple-400">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="font-semibold text-slate-900 dark:text-white mb-3">路径拼接</h3>
-              <div class="relative group/code">
-                <div class="absolute inset-0 bg-slate-100 dark:bg-slate-900 rounded-lg transform transition-transform group-hover/code:scale-[1.02]"></div>
-                <div class="relative flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
-                  <code class="text-xs font-mono text-slate-600 dark:text-slate-300 break-all truncate pr-16" id="method3">Loading...</code>
-                  <button onclick="copyCode('method3')" class="copy-btn absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 text-xs font-medium rounded-md bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">复制</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="group p-6 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all">
-          <div class="flex items-start space-x-4">
-            <div class="p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg text-emerald-600 dark:text-emerald-400">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="font-semibold text-slate-900 dark:text-white mb-3">环境变量 (CLI)</h3>
-              <div class="relative group/code">
-                 <div class="relative flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
-                  <code class="text-xs font-mono text-slate-600 dark:text-slate-300 break-all truncate pr-16" id="method4">Loading...</code>
-                  <button onclick="copyCode('method4')" class="copy-btn absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 text-xs font-medium rounded-md bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">复制</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-         <div class="group p-6 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all">
-          <div class="flex items-start space-x-4">
-            <div class="p-2 bg-sky-50 dark:bg-sky-900/20 rounded-lg text-sky-600 dark:text-sky-400">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-            </div>
-            <div class="flex-1 min-w-0">
-              <h3 class="font-semibold text-slate-900 dark:text-white mb-3">Docker 加速</h3>
-              <div class="relative group/code">
-                 <div class="relative flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">
-                  <code class="text-xs font-mono text-slate-600 dark:text-slate-300 break-all truncate pr-16" id="scene2">Loading...</code>
-                  <button onclick="copyCode('scene2')" class="copy-btn absolute right-2 top-1/2 -translate-y-1/2 px-2.5 py-1 text-xs font-medium rounded-md bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">复制</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <section class="mb-24">
-      <div class="flex items-center justify-between mb-8">
-        <h2 class="text-2xl font-bold tracking-tight">典型场景</h2>
-        <span class="h-px flex-1 bg-slate-200 dark:bg-slate-800 ml-6"></span>
-      </div>
-      
-      <div class="grid sm:grid-cols-2 gap-4">
-        
-        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 flex flex-col justify-center">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-semibold flex items-center">
-              <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
-              GitHub 文件加速
-            </span>
-            <button onclick="copyCode('scene1')" class="text-xs text-blue-600 dark:text-blue-400 hover:underline copy-btn p-1 rounded">复制</button>
-          </div>
-          <code class="text-[10px] sm:text-xs font-mono text-slate-500 truncate" id="scene1">Loading...</code>
-        </div>
-
-        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 flex flex-col justify-center">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-semibold flex items-center">
-              <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-              OpenAI API 代理
-            </span>
-            <button onclick="copyCode('scene3')" class="text-xs text-blue-600 dark:text-blue-400 hover:underline copy-btn p-1 rounded">复制</button>
-          </div>
-          <code class="text-[10px] sm:text-xs font-mono text-slate-500 truncate" id="scene3">Loading...</code>
-        </div>
-
-        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 flex flex-col justify-center sm:col-span-2">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-sm font-semibold flex items-center">
-               <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
-              JS Fetch (CORS)
-            </span>
-            <button onclick="copyCode('scene4')" class="text-xs text-blue-600 dark:text-blue-400 hover:underline copy-btn p-1 rounded">复制</button>
-          </div>
-          <code class="text-[10px] sm:text-xs font-mono text-slate-500 truncate" id="scene4">Loading...</code>
-        </div>
-      </div>
-    </section>
-
-    <section>
-       <div class="flex items-center justify-between mb-10">
-        <h2 class="text-2xl font-bold tracking-tight">核心能力</h2>
-        <span class="h-px flex-1 bg-slate-200 dark:bg-slate-800 ml-6"></span>
-      </div>
-
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 transition-colors text-center group">
-          <div class="w-10 h-10 mx-auto mb-3 rounded-full bg-white dark:bg-slate-700 shadow-sm flex items-center justify-center text-slate-700 dark:text-slate-300 group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          </div>
-          <h3 class="font-medium text-sm text-slate-900 dark:text-slate-200">HTTPS 加密</h3>
-        </div>
-
-        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 transition-colors text-center group">
-          <div class="w-10 h-10 mx-auto mb-3 rounded-full bg-white dark:bg-slate-700 shadow-sm flex items-center justify-center text-slate-700 dark:text-slate-300 group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          </div>
-          <h3 class="font-medium text-sm text-slate-900 dark:text-slate-200">智能缓存</h3>
-        </div>
-
-        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 transition-colors text-center group">
-          <div class="w-10 h-10 mx-auto mb-3 rounded-full bg-white dark:bg-slate-700 shadow-sm flex items-center justify-center text-slate-700 dark:text-slate-300 group-hover:scale-110 transition-transform">
-             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-          <h3 class="font-medium text-sm text-slate-900 dark:text-slate-200">全球 CDN</h3>
-        </div>
-
-        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-white dark:hover:bg-slate-800 transition-colors text-center group">
-          <div class="w-10 h-10 mx-auto mb-3 rounded-full bg-white dark:bg-slate-700 shadow-sm flex items-center justify-center text-slate-700 dark:text-slate-300 group-hover:scale-110 transition-transform">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-          </div>
-          <h3 class="font-medium text-sm text-slate-900 dark:text-slate-200">安全限流</h3>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="border-t border-slate-200/60 dark:border-slate-800/60 py-10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-      <div class="flex items-center space-x-2 text-slate-500 dark:text-slate-400">
-        <span class="font-semibold text-sm">Cloudflare Proxy</span>
-        <span class="text-slate-300 dark:text-slate-600">|</span>
-        <span class="text-xs">v${config.VERSION}</span>
-      </div>
-      
-      <p class="text-xs text-slate-400 dark:text-slate-500 text-center md:text-right">
-        Powered by Cloudflare Workers · Designed with Minimalist UI
-      </p>
-    </div>
-  </footer>
+  </div>
 
   <script>
+    // 获取当前域名并填充示例
     const currentOrigin = window.location.origin;
-    const isLocal = currentOrigin.includes('localhost') || currentOrigin.includes('127.0.0.1');
-    const demoDomain = isLocal ? 'https://example.com' : 'https://raw.githubusercontent.com';
 
-    // 填充内容
+    // 填充使用方式示例
+    document.getElementById('method2').textContent = currentOrigin + '/?url=https://example.com';
     document.getElementById('method3').textContent = currentOrigin + '/https://example.com';
     document.getElementById('method4').textContent = 'export HTTP_PROXY=' + currentOrigin;
+
+    // 填充使用场景示例
     document.getElementById('scene1').textContent = currentOrigin + '/https://raw.githubusercontent.com/user/repo/main/file.txt';
     document.getElementById('scene2').textContent = currentOrigin + '/https://registry-1.docker.io';
     document.getElementById('scene3').textContent = currentOrigin + '/https://api.openai.com/v1/chat/completions';
     document.getElementById('scene4').textContent = 'fetch("' + currentOrigin + '/https://api.example.com/data")';
 
-    // 复制功能优化
-    window.copyCode = function(elementId) {
-      const text = document.getElementById(elementId).textContent;
-      const button = event.currentTarget; // 使用 currentTarget 确保获取到 button
-      
-      navigator.clipboard.writeText(text).then(() => {
-        const originalText = button.textContent;
-        button.textContent = '已复制';
-        button.classList.add('copied');
-        
-        setTimeout(() => {
-          button.textContent = originalText;
-          button.classList.remove('copied');
-        }, 2000);
-      }).catch(err => {
-        console.error('复制失败:', err);
-      });
-    }
-
-    // 表单提交
+    // 表单提交处理
     document.getElementById('urlForm').addEventListener('submit', function(event) {
       event.preventDefault();
-      let targetUrl = document.getElementById('targetUrl').value.trim();
-      if (!targetUrl) return;
 
+      let targetUrl = document.getElementById('targetUrl').value.trim();
+
+      // 如果没有协议，自动添加 https://
       if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
         targetUrl = 'https://' + targetUrl;
       }
 
-      const proxyUrl = currentOrigin + '/' + targetUrl; // 直接拼接，Cloudflare通常能处理，或者 encodeURIComponent
-      // 为了兼容性，建议 encodeURICompnent，但为了视觉美观，这里保持直接拼接逻辑，视后端实现而定
-      // 如果后端支持 /https://google.com 这种格式：
-      window.open(currentOrigin + '/' + targetUrl, '_blank');
+      // 构建代理 URL
+      const proxyUrl = currentOrigin + '/' + encodeURIComponent(targetUrl);
+
+      // 在新标签页打开
+      window.open(proxyUrl, '_blank');
     });
   </script>
 </body>
