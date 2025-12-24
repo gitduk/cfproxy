@@ -1,12 +1,12 @@
-export function getHtml(config) {
+export function getHTML(config) {
   return `<!DOCTYPE html>
 <html lang="zh-CN" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cloudflare Proxy - 全功能代理服务</title>
+  <title>CFProxy - 全功能代理服务</title>
   <meta name="description" content="基于 Cloudflare Workers 的全功能 HTTP/HTTPS 代理服务">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='0.9em' font-size='90'%3E🌐%3C/text%3E%3C/svg%3E">
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -82,7 +82,7 @@ export function getHtml(config) {
                     Cloudflare Proxy
                   </h1>
                   <p class="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-                    CFPorxy v${config.version} - 基于 Cloudflare Workers 的全功能 HTTP/HTTPS 代理服务，支持多种访问方式，完全免费且易于使用。
+                    CFProxy - 基于 Cloudflare Workers 的全功能 HTTP/HTTPS 代理服务，支持多种访问方式，完全免费且易于使用。
                   </p>
                 </div>
 
@@ -215,7 +215,7 @@ export function getHtml(config) {
                 <div class="mx-auto max-w-2xl lg:max-w-5xl">
                   <div class="flex flex-col items-center justify-between gap-6 sm:flex-row">
                     <p class="text-sm text-zinc-400 dark:text-zinc-500">
-                      Powered by Cloudflare Workers
+                      Powered by Cloudflare Workers · v${config.VERSION}
                     </p>
                     <a
                       href="https://github.com/Yrobot/cloudflare-proxy"
@@ -258,7 +258,7 @@ export function getHtml(config) {
 
       let targetUrl = document.getElementById('targetUrl').value.trim();
 
-      // 如果没有协议，自动添加 https://
+      // 如果没有协议,自动添加 https://
       if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
         targetUrl = 'https://' + targetUrl;
       }

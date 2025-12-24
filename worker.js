@@ -1,10 +1,9 @@
 /**
  * Cloudflare Worker HTTP/HTTPS Proxy - Enhanced Version
- * 版本：2.0.0
  */
 
 // 导入 UI
-import { getHtml } from "./ui.js";
+import { getHTML } from "./ui.js";
 
 // ==================== 配置区域 ====================
 const CONFIG = {
@@ -97,7 +96,7 @@ export default {
 
       // 5. 根路径 - 返回 Web UI
       if (url.pathname === "/" || url.pathname === "") {
-        return new Response(getHtml(CONFIG), {
+        return new Response(getHTML(CONFIG), {
           headers: {
             "Content-Type": "text/html; charset=utf-8",
             ...corsHeaders(),
