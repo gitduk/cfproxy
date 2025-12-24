@@ -97,7 +97,7 @@ export default {
 
       // 5. 根路径 - 返回 Web UI
       if (url.pathname === '/' || url.pathname === '') {
-        return new Response(getHTML(CONFIG), {
+        return new Response(getHTML(), {
           headers: {
             'Content-Type': 'text/html; charset=utf-8',
             ...corsHeaders()
