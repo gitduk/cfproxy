@@ -3,7 +3,7 @@
  */
 
 // 导入 UI
-import { getHTML } from "./ui.js";
+import { getHtml } from "./ui.js";
 
 // ==================== 配置区域 ====================
 const CONFIG = {
@@ -96,7 +96,7 @@ export default {
 
       // 5. 根路径 - 返回 Web UI
       if (url.pathname === "/" || url.pathname === "") {
-        return new Response(getHTML(CONFIG), {
+        return new Response(getHtml(CONFIG), {
           headers: {
             "Content-Type": "text/html; charset=utf-8",
             ...corsHeaders(),
@@ -301,15 +301,20 @@ async function handleProxyRequest(request, url, env) {
         const absoluteLocation = new URL(location, target).toString();
         const proxyLocation = `${url.origin}/${encodeURIComponent(absoluteLocation)}`;
 
+        const responseHeaders = new Headers(response.headers);
+        responseHeaders.set("Location", proxyLocation); // 覆盖原来的 Location
+
+        // 添加 CORS 和缓存控制头
+        Object.entries({ ...corsHeaders(), ...noCacheHeaders() }).forEach(
+          ([key, value]) => {
+            responseHeaders.set(key, value);
+          },
+        );
+
         return new Response(response.body, {
           status: response.status,
           statusText: response.statusText,
-          headers: {
-            ...Object.fromEntries(response.headers),
-            Location: proxyLocation,
-            ...corsHeaders(),
-            ...noCacheHeaders(),
-          },
+          headers: responseHeaders,
         });
       }
     }

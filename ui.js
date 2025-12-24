@@ -1,4 +1,4 @@
-export function getHTML(config) {
+export function getHtml(config) {
   return `<!DOCTYPE html>
 <html lang="zh-CN" class="h-full">
 <head>
