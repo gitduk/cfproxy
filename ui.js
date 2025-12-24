@@ -1,4 +1,4 @@
-function getHtml(cfg) {
+function getHtml() {
   return `<!DOCTYPE html>
 <html lang="zh-CN" class="h-full">
 <head>
@@ -82,7 +82,7 @@ function getHtml(cfg) {
                     Cloudflare Proxy
                   </h1>
                   <p class="mt-6 text-base text-zinc-600 dark:text-zinc-400">
-                    CFPorxy v${cfg.VERSION} - 基于 Cloudflare Workers 的全功能 HTTP/HTTPS 代理服务，支持多种访问方式，完全免费且易于使用。
+                    CFPorxy - 基于 Cloudflare Workers 的全功能 HTTP/HTTPS 代理服务，支持多种访问方式，完全免费且易于使用。
                   </p>
                 </div>
 
