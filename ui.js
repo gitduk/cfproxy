@@ -75,11 +75,6 @@ export function getHtml(config) {
       box-shadow: 0 0 0 1px #10b981 !important;
     }
 
-    .input-invalid {
-      border-color: #ef4444 !important;
-      box-shadow: 0 0 0 1px #ef4444 !important;
-    }
-
     .validation-icon {
       position: absolute;
       right: 12px;
@@ -122,7 +117,7 @@ export function getHtml(config) {
                           id="targetUrl"
                           placeholder="example.com 或 https://example.com"
                           required
-                          class="w-full rounded-md bg-white px-4 py-2 pr-10 text-sm text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-teal-500 dark:bg-zinc-800 dark:text-zinc-100 dark:ring-zinc-700 dark:placeholder:text-zinc-500 transition-all"
+                          class="w-full rounded-md bg-white px-4 py-2 pr-10 text-sm text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 dark:bg-zinc-800 dark:text-zinc-100 dark:ring-zinc-700 dark:placeholder:text-zinc-500 transition-all"
                         >
                         <!-- 验证图标 -->
                         <span id="validationIcon" class="validation-icon hidden">
@@ -131,21 +126,21 @@ export function getHtml(config) {
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                           </svg>
                           <!-- 错误图标 -->
-                          <svg id="invalidIcon" class="w-5 h-5 text-red-500 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                          <svg id="invalidIcon" class="w-5 h-5 text-yellow-500 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
                           </svg>
                         </span>
                       </div>
                       <!-- 验证提示信息 -->
                       <p id="validationMessage" class="mt-2 text-xs hidden">
-                        <span id="errorMessage" class="text-red-600 dark:text-red-400"></span>
+                        <span id="errorMessage" class="text-yellow-600 dark:text-yellow-400"></span>
                         <span id="successMessage" class="text-green-600 dark:text-green-400"></span>
                       </p>
                     </div>
                     <button
                       type="submit"
                       id="submitButton"
-                      class="w-full rounded-md bg-zinc-900 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 dark:bg-teal-500 dark:hover:bg-teal-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                      class="w-full rounded-md bg-zinc-900 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900 dark:bg-teal-500 dark:hover:bg-teal-400 disabled:cursor-not-allowed transition-all"
                     >
                       开始代理
                     </button>
